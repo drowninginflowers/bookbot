@@ -3,7 +3,7 @@ from stats import count_words, get_alphabetic_char_counts
 import sys
 
 def get_book_text(book_path: Path) -> str:
-    return Path(book_path).read_text(encoding='utf-8')
+    return book_path.read_text(encoding='utf-8')
 
 def analyze_book(book_path: Path) -> None:
     book_text = get_book_text(book_path)
@@ -19,16 +19,20 @@ def analyze_book(book_path: Path) -> None:
         print(f"{char_data['char']}: {char_data['count']}")
     print("============= END ===============")
 
-def main(book_path) -> None:
-    try:
-        analyze_book(book_path)
-    except Exception as error:
-        print(error)
-
-if __name__ == "__main__":
+def main() -> None:
     if len(sys.argv) != 2:
         print("Usage: python3 main.py <path_to_book>")
         sys.exit(1)
-    else:
-        path_to_book = Path(sys.argv[1])
-        main(path_to_book)
+
+    book_path = Path(sys.argv[1])
+    try:
+        analyze_book(book_path)
+    except FileNotFoundError:
+        print(f"Error: File '{book_path}' not found.")
+        sys.exit(1)
+    except Exception as error:
+        print(f"Error: {error}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
